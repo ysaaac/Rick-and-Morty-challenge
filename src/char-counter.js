@@ -11,6 +11,7 @@ export function countCharFromData(char, data) {
     const searchReg = new RegExp(char, "gi")
     data.forEach(dataObj => {
         const {name} = dataObj
+        //console.log(name, name.match(searchReg))
         qtyOfChars += (name.match(searchReg) || []).length
     })
     return qtyOfChars

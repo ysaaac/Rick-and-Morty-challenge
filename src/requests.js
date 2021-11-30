@@ -6,9 +6,11 @@ const HOST = 'https://rickandmortyapi.com/api'
  * Request is an easy and reusable function that handle request from API
  * @param  {string} url is the endpoint that will be use for request data
  */
-async function request(url) {
+async function request(url, customURL) {
+    const finalURL = customURL || `${HOST}/${url}`
+    //console.log(finalURL)
     try {
-        const response = await nodeFetch(`${HOST}/${url}`)
+        const response = await nodeFetch(finalURL)
         return response.json()
     } catch (err) {
         console.log(err.message);
@@ -28,7 +30,6 @@ async function request(url) {
  * @param  {boolean || null} getFasterWay indicates the method that data will be request
  */
 export async function getAllData(url, getFasterWay = null) {
-    const data = []
     let req = await request(url)
     // getWay will define
     if (getFasterWay) {
@@ -39,14 +40,18 @@ export async function getAllData(url, getFasterWay = null) {
         return await request(`${url}/${numberData}`)
     } else {
         // Iterates through all the pages and get all data automatically
+        let data = []
         let next = req.info.next
-        let result = req.result
+        let result = req.results
         while (!!next) {
             console.log(next)
-            data.concat(result)
-            let req = await request(next)
+            //data.concat(result)
+            data = [...data,...result]
+            let req = await request(null,next)
             next = req.info.next
-            result = req.result
+            result = req.results
+            //console.log(result)
+            //console.log(data)
         }
     }
     return data
